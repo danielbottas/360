@@ -1,44 +1,53 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="utf-8" />
-    <title>360 Viewer</title>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>360 Viewer</title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <style>
+    html, body { margin: 0; height: 100%; background: #000; }
+  </style>
+</head>
 
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+<body>
+  <a-scene
+    style="height: 100vh; width: 100vw;"
+    loading-screen="enabled: true"
+    vr-mode-ui="enabled: true"
+  >
+    <a-assets id="assets"></a-assets>
 
-    <script>
-      // Função para pegar parâmetros da URL
-      function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-      }
+    <a-sky id="sky" rotation="0 -90 0"></a-sky>
 
-      document.addEventListener("DOMContentLoaded", () => {
-        const imgFromUrl = getQueryParam("img");
-        const sky = document.querySelector("#sky");
+    <a-camera position="0 1.6 0" look-controls="reverseMouseDrag: true"></a-camera>
+  </a-scene>
 
-        // fallback se não passar nada na URL
-        sky.setAttribute(
-          "src",
-          imgFromUrl ? imgFromUrl : "360_5.png"
-        );
-      });
-    </script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const img = params.get("img") || "360_2.png"; // fallback
 
-    <style>
-      body { margin: 0; }
-    </style>
-  </head>
+    const assets = document.getElementById("assets");
+    const sky = document.getElementById("sky");
 
-  <body>
-    <a-scene embedded>
-      <a-sky id="sky" rotation="0 -90 0"></a-sky>
+    // Cria asset de imagem e aguarda carregar
+    const imgAsset = document.createElement("img");
+    imgAsset.setAttribute("id", "pano");
+    imgAsset.setAttribute("crossorigin", "anonymous");
+    imgAsset.src = img;
 
-      <!-- Câmera -->
-      <a-camera
-        position="0 1.6 0"
-        look-controls="reverseMouseDrag: true"
-      ></a-camera>
-    </a-scene>
-  </body>
+    imgAsset.onload = () => {
+      sky.setAttribute("src", "#pano");
+      console.log("Imagem 360 carregada:", img);
+    };
+
+    imgAsset.onerror = () => {
+      console.error("Não consegui carregar a imagem:", img);
+      alert("Erro: não encontrei/carreguei a imagem '" + img + "'.\n" +
+            "Confira o nome do arquivo (maiúsculas/minúsculas) e se está na mesma pasta do HTML.");
+    };
+
+    assets.appendChild(imgAsset);
+  </script>
+</body>
 </html>
