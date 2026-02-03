@@ -1,14 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
   <head>
+    <meta charset="utf-8" />
+    <title>360 Viewer</title>
+
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+
+    <script>
+      // Função para pegar parâmetros da URL
+      function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const imgFromUrl = getQueryParam("img");
+        const sky = document.querySelector("#sky");
+
+        // fallback se não passar nada na URL
+        sky.setAttribute(
+          "src",
+          imgFromUrl ? imgFromUrl : "360_5.png"
+        );
+      });
+    </script>
+
+    <style>
+      body { margin: 0; }
+    </style>
   </head>
+
   <body>
-    <a-scene>
-      <!-- Substitua 'imagem360.jpg' pelo caminho da sua imagem -->
-      <a-sky src="360_5.jpg"></a-sky>
-      <!-- Câmera opcional para controle -->
-      <a-camera position="0 0 0"></a-camera>
+    <a-scene embedded>
+      <a-sky id="sky" rotation="0 -90 0"></a-sky>
+
+      <!-- Câmera -->
+      <a-camera
+        position="0 1.6 0"
+        look-controls="reverseMouseDrag: true"
+      ></a-camera>
     </a-scene>
   </body>
 </html>
