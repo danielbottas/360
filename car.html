@@ -1,31 +1,60 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Viewer 360</title>
+  <title>360 Video Viewer</title>
 
-  <!-- Pannellum (viewer 360) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
-  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
 
   <style>
-    html, body { height: 100%; margin: 0; }
-    #panorama { width: 100%; height: 100%; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
   </style>
 </head>
+
 <body>
-  <div id="panorama"></div>
+  <a-scene
+    style="width:100vw; height:100vh"
+    vr-mode-ui="enabled: true"
+    loading-screen="enabled: true"
+  >
+    <a-assets>
+      <video
+        id="video360"
+        src="v360.mp4"
+        crossorigin="anonymous"
+        playsinline
+        webkit-playsinline
+        loop
+        preload="auto"
+        muted
+      ></video>
+    </a-assets>
+
+    <a-videosphere
+      src="#video360"
+      rotation="0 -90 0"
+    ></a-videosphere>
+
+    <a-camera position="0 1.6 0"></a-camera>
+  </a-scene>
 
   <script>
-    pannellum.viewer('panorama', {
-      type: 'equirectangular',
-      panorama: 'car.png', // <- troque aqui
-      autoLoad: true,
-      hfov: 90,
-      showControls: true,
-      mouseZoom: true,
-      keyboardZoom: true
+    const video = document.getElementById("video360");
+
+    // Autoplay silencioso (funciona melhor no Quest)
+    video.play().catch(() => {
+      console.log("Autoplay bloqueado, aguarde interação do usuário.");
+    });
+
+    // Toca ao entrar em VR
+    document.querySelector("a-scene").addEventListener("enter-vr", () => {
+      video.play();
     });
   </script>
 </body>
